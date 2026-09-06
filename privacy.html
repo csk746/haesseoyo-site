@@ -27,31 +27,31 @@
 <h2>1. 수집하는 정보</h2>
 <ul>
   <li><b>익명 계정 식별자</b>: 회원가입 없이 자동 생성되는 무작위 ID입니다. 이메일, 전화번호, 실명을 요구하지 않습니다.</li>
-  <li><b>사용자가 입력한 정보</b>: 가족에게 보일 이름(별명 가능), 챙길 일의 이름·시간·담당, 완료 확인 기록.</li>
+  <li><b>사용자가 입력한 정보</b>: 가족에게 보일 이름(별명 가능), 챙길 일의 이름·시간·담당, 선택하여 직접 입력하는 장소 메모, 완료 확인 기록.</li>
   <li><b>푸시 토큰</b>: 가족 알림 발송을 위한 기기 알림 토큰.</li>
   <li><b>기기 시간대</b>: 알림 시각 계산을 위해 저장됩니다.</li>
 </ul>
 
 <h2>2. 수집하지 않는 정보</h2>
 <ul>
-  <li>위치 정보, 연락처, 사진, 건강 데이터(HealthKit), 광고 식별자(IDFA)를 수집하지 않습니다.</li>
+  <li>GPS 등 기기에서 얻는 위치 정보, 연락처, 사진, 건강 데이터(HealthKit), 광고 식별자(IDFA)를 수집하지 않습니다. 위치 권한을 요청하지 않으며, 장소 메모는 사용자가 직접 입력하는 선택 정보입니다.</li>
   <li>제3자 광고·분석 SDK를 사용하지 않습니다.</li>
 </ul>
 
 <h2>3. 정보의 이용</h2>
 <p>수집한 정보는 오직 다음 목적에만 사용됩니다: 가족 스페이스 내 일과·확인 기록 동기화,
-정해진 시간의 알림 및 미확인 시 가족 알림 발송.</p>
+정해진 시간과 미확인 시의 알림, 사용자가 요청한 즉시 알림, 완료 소식의 발송.</p>
 
 <h2>4. 보관 및 처리 위탁</h2>
-<p>데이터는 Supabase(호스팅: Amazon Web Services, 서울 리전)에 암호화 전송(TLS)으로 저장됩니다.
-법령상 의무가 있는 경우를 제외하고 제3자에게 제공하지 않습니다.</p>
+<p>장소 메모를 포함한 일정·완료 기록은 앱 기기에 캐시되며, 가족 동기화 데이터는 Supabase(호스팅: Amazon Web Services, 서울 리전)에 저장되고 TLS로 전송됩니다.</p>
+<p>푸시 알림 전달을 위해 기기 알림 토큰과 알림 내용(일정 제목, 장소 메모, 관련 구성원의 표시 이름, 시간)이 Expo와 Google Firebase Cloud Messaging(FCM) 또는 Apple Push Notification service(APNs)를 통해 처리됩니다. 이 서비스 제공과 법령상 의무를 제외한 목적으로 제3자에게 제공하지 않습니다.</p>
 
 <h2>5. 공유 범위</h2>
-<p>입력한 이름·챙길 일·확인 기록은 <b>같은 초대 코드로 연결된 가족 스페이스 구성원에게만</b> 표시됩니다.</p>
+<p>입력한 이름·장소 메모를 포함한 챙길 일·확인 기록은 <b>같은 초대 코드로 연결된 가족 스페이스 구성원에게만</b> 표시됩니다.</p>
 
 <h2>6. 삭제</h2>
-<p>앱 내 <b>설정 → 계정·데이터 삭제</b>에서 언제든 계정과 모든 데이터를 즉시·영구 삭제할 수 있습니다.
-다른 구성원이 남아 있는 스페이스의 공동 기록은 스페이스에 유지되며, 본인 계정 정보는 삭제됩니다.</p>
+<p>앱 내 <b>설정 → 계정·데이터 삭제</b>에서 언제든 본인 계정과 계정 정보를 삭제할 수 있습니다.
+다른 구성원이 남아 있는 스페이스의 공동 기록은 삭제된 계정과의 연결을 제거한 상태로 유지됩니다.</p>
 
 <h2>7. 아동</h2>
 <p>본 앱은 만 14세 미만 아동을 대상으로 하지 않으며, 아동의 개인정보를 고의로 수집하지 않습니다.</p>
@@ -71,33 +71,32 @@ We collect only the minimum information needed to provide the service.</p>
 <h2>1. Information we collect</h2>
 <ul>
   <li><b>Anonymous account ID</b>: a random identifier created without sign-up. We do not ask for your email, phone number, or real name.</li>
-  <li><b>Information you enter</b>: your display name (nicknames welcome), routine names/times/assignees, and completion records.</li>
+  <li><b>Information you enter</b>: your display name (nicknames welcome), routine names/times/assignees, optional place notes you type yourself, and completion records.</li>
   <li><b>Push token</b>: a device notification token used to deliver family alerts.</li>
   <li><b>Device timezone</b>: stored to schedule reminders correctly.</li>
 </ul>
 
 <h2>2. Information we do NOT collect</h2>
 <ul>
-  <li>No location, contacts, photos, health data (HealthKit), or advertising identifiers (IDFA).</li>
+  <li>No GPS or other device-derived location, contacts, photos, health data (HealthKit), or advertising identifiers (IDFA). We do not request location permission. Place notes are optional information you enter yourself.</li>
   <li>No third-party advertising or analytics SDKs.</li>
 </ul>
 
 <h2>3. How we use it</h2>
 <p>Solely to sync routines and completion records within your family space, and to send
-scheduled reminders and missed-routine alerts to family members.</p>
+scheduled and missed-routine reminders, reminders requested by a user, and completion updates.</p>
 
 <h2>4. Storage &amp; processors</h2>
-<p>Data is stored with Supabase (hosted on Amazon Web Services, Seoul region) and transmitted
-over TLS. We do not share data with third parties except as required by law.</p>
+<p>Routines, including place notes, and completion records are cached on the app device. Family sync data is stored with Supabase (hosted on Amazon Web Services, Seoul region) and transmitted over TLS.</p>
+<p>To deliver push notifications, device push tokens and notification content (routine titles, place notes, relevant members' display names, and times) are processed through Expo and Google Firebase Cloud Messaging (FCM) or Apple Push Notification service (APNs). We do not provide data to third parties for purposes other than providing these services or meeting legal obligations.</p>
 
 <h2>5. Who can see your data</h2>
-<p>Your name, routines, and records are visible <b>only to members of the family space joined
+<p>Your name, routines including place notes, and records are visible <b>only to members of the family space joined
 with the same invite code</b>.</p>
 
 <h2>6. Deletion</h2>
-<p>You can permanently delete your account and data anytime in
-<b>Settings → Delete account &amp; data</b>. Shared records in spaces that still have other
-members remain with the space; your account information is deleted.</p>
+<p>You can delete your account and account information anytime in
+<b>Settings → Delete account &amp; data</b>. Shared records in spaces that still have other members remain with their link to the deleted account removed.</p>
 
 <h2>7. Children</h2>
 <p>The app is not directed at children under 14 and does not knowingly collect their data.</p>
