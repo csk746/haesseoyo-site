@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+  <meta name="theme-color" content="#F4F6F3">
+  <meta name="robots" content="noindex, nofollow">
+  <title>우리 집에 함께해요 — 했어요</title>
+  <meta name="description" content="했어요에서 가족의 초대를 확인하고, 우리 집의 챙길 일을 함께 나눠요.">
+  <link rel="stylesheet" href="./invite.css">
+  <script type="module" src="./invite.js"></script>
+</head>
+<body>
+  <main class="page">
+    <a class="wordmark" href="./privacy.html" aria-label="했어요 개인정보처리방침">했어요<span>가족과 함께하는 작은 확인</span></a>
+
+    <section class="welcome" aria-labelledby="page-title">
+      <div class="invitation-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="48" height="48" fill="none"><path d="M10 15.5A5.5 5.5 0 0 1 15.5 10h17a5.5 5.5 0 0 1 5.5 5.5v13a5.5 5.5 0 0 1-5.5 5.5H22l-8 5v-5.2a5.5 5.5 0 0 1-4-5.3v-13Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/><path d="m18.5 22 4 4 7.5-8" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="eyebrow">가족 초대</p>
+      <h1 id="page-title">우리 집을<br>함께 챙겨요</h1>
+      <p class="intro" id="intro">챙길 일을 나누고, 했다는 소식을 전해요.<br>아래 초대 코드로 가족과 연결해 주세요.</p>
+    </section>
+
+    <section class="invite-card" aria-labelledby="code-label">
+      <div class="code-heading">
+        <h2 id="code-label">우리 집 초대 코드</h2>
+        <button class="copy-button" id="copy-code" type="button" disabled>코드 복사</button>
+      </div>
+      <code class="invite-code" id="invite-code" tabindex="0">확인 중</code>
+      <p class="status" id="invite-status" role="status" aria-live="polite">초대 링크를 확인하고 있어요.</p>
+      <a class="primary-button" id="open-app" hidden>앱에서 초대 열기 <span aria-hidden="true">↗</span></a>
+      <p class="card-note" id="open-note" hidden>앱에서 초대를 확인한 뒤 직접 참여할 수 있어요.</p>
+    </section>
+
+    <section class="download-section" aria-labelledby="download-title">
+      <h2 id="download-title">앱이 처음이라면</h2>
+      <p class="download-intro">사용하는 기기에 맞게 설치해 주세요.</p>
+      <div class="store-buttons">
+        <a class="store-button" id="download-android" rel="noopener noreferrer" hidden><span class="platform-label">Android</span><span>Google Play에서 받기 <span aria-hidden="true">↗</span></span></a>
+        <span class="store-button store-unavailable" id="android-unavailable" aria-disabled="true"><span class="platform-label">Android</span><span>다운로드 연결 확인 중</span></span>
+        <a class="store-button" id="download-ios" rel="noopener noreferrer" hidden><span class="platform-label">iPhone · iPad</span><span>App Store에서 받기 <span aria-hidden="true">↗</span></span></a>
+        <span class="store-button store-unavailable" id="ios-unavailable" aria-disabled="true"><span class="platform-label">iPhone · iPad</span><span>다운로드 연결 확인 중</span></span>
+      </div>
+      <p class="download-status" id="download-status" role="status" aria-live="polite"></p>
+      <ol class="steps">
+        <li><span class="step-number" aria-hidden="true">1</span><div><strong>앱을 설치해 주세요</strong><p>위 스토어에서 ‘했어요’를 받아주세요.</p></div></li>
+        <li><span class="step-number" aria-hidden="true">2</span><div><strong>이 초대 페이지로 돌아와 주세요</strong><p>‘앱에서 초대 열기’를 누르면 이어갈 수 있어요.</p></div></li>
+      </ol>
+      <div class="manual-help"><strong>앱이 열리지 않나요?</strong><p>초대 코드를 복사한 뒤, 앱의 시작 화면 또는 <b>설정 → 가족 스페이스에 합류</b>에 붙여넣어 주세요.</p></div>
+    </section>
+    <noscript><p class="noscript-note">초대 코드를 확인하려면 브라우저에서 JavaScript를 허용해 주세요. 앱에 가족이 알려준 코드를 직접 입력해도 참여할 수 있어요.</p></noscript>
+    <footer>매일의 작은 확인이, 서로의 안심으로.<br><a href="./privacy.html">개인정보처리방침</a></footer>
+  </main>
+</body>
+</html>
