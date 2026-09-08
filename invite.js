@@ -1,7 +1,7 @@
-/** Only the canonical 12-hex invitation is accepted; never render untrusted URL text. */
+/** Accept the short numeric code and legacy invitations; never render untrusted URL text. */
 export function parseInviteCode(search) {
   const values = new URLSearchParams(search).getAll('code');
-  return values.length === 1 && /^[a-f0-9]{12}$/i.test(values[0]) ? values[0].toLowerCase() : null;
+  return values.length === 1 && /^(?:[0-9]{6}|[a-f0-9]{12})$/i.test(values[0]) ? values[0].toLowerCase() : null;
 }
 
 export function storeUrl(value, platform) {
@@ -46,7 +46,7 @@ export function renderInvite(document, search) {
   note.hidden = !code;
   if (code) {
     open.href = `haesseoyo://invite?code=${code}`;
-    status.textContent = '가족에게 받은 초대 코드예요.';
+    status.textContent = code.length === 6 ? '가족에게 받은 6자리 초대 코드예요.' : '이 초대 링크에 연결된 코드예요. 앱에서 바로 참여할 수 있어요.';
   } else {
     open.removeAttribute('href');
     document.getElementById('page-title').textContent = '초대 링크를 다시 확인해 주세요';

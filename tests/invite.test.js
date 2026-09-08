@@ -18,10 +18,12 @@ function fixture() {
   return { document, get: document.getElementById };
 }
 
-test('accepts exactly one 12-hex invite and normalizes case', () => {
+test('accepts exactly one six-digit or legacy twelve-hex invite and preserves leading zeros', () => {
+  assert.equal(parseInviteCode('?code=001234'), '001234');
+  assert.equal(parseInviteCode('?code=987654'), '987654');
   assert.equal(parseInviteCode('?code=a1b2c3d4e5f6'), 'a1b2c3d4e5f6');
   assert.equal(parseInviteCode('?code=A1B2C3D4E5F6'), 'a1b2c3d4e5f6');
-  for (const search of ['', '?code=', '?code=12345678', '?code=123456789abcd', '?code=gggggggggggg', '?code=123456789abc&code=123456789abc', '?code=%3Cscript%3E', '?code=%20123456789abc', '?code=123456789abc%0A']) {
+  for (const search of ['', '?code=', '?code=12345', '?code=1234567', '?code=ABCDEF', '?code=12a456', '?code=１２３４５６', '?code=123456&code=123456', '?code=12345678', '?code=123456789abcd', '?code=gggggggggggg', '?code=123456789abc&code=123456789abc', '?code=%3Cscript%3E', '?code=%20123456789abc', '?code=123456789abc%0A']) {
     assert.equal(parseInviteCode(search), null, search);
   }
 });
@@ -82,7 +84,19 @@ test('page has local assets, referrer protection, manual installation fallback, 
   const js = await readFile(new URL('../invite.js', import.meta.url), 'utf8');
   assert.match(html, /name="referrer" content="no-referrer"/);
   assert.match(html, /설정 → 가족 스페이스에 합류/);
-  assert.match(html, /이 초대 페이지로 돌아와/);
+  assert.match(html, /받은 초대 링크를 다시 열어/);
   assert.doesNotMatch(html, /(?:src|href)="https?:/);
-  assert.doesNotMatch(js, /innerHTML|console\.|sendBeacon|localStorage|sessionStorage|document\.cookie/);
+  assert.doesNotMatch(js, /innerHTML|console\.|sendBeacon|localStorage|sessionStorage|document\.cookie|location\.(?:assign|replace)|setTimeout/);
+});
+
+
+test('six-digit invitations keep the manual fallback and app target consistent without navigation', async () => {
+  const { document, get } = fixture();
+  assert.equal(renderInvite(document, '?code=001234'), '001234');
+  assert.equal(get('invite-code').textContent, '001234');
+  assert.equal(get('open-app').href, 'haesseoyo://invite?code=001234');
+  assert.match(get('invite-status').textContent, /6자리/);
+  let copied;
+  await copyInvite('001234', document, { navigator: { clipboard: { writeText: async (value) => { copied = value; } } } });
+  assert.equal(copied, '001234');
 });
