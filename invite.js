@@ -78,18 +78,103 @@ export async function copyInvite(code, document, browser = window) {
   }
 }
 
+export function mobilePlatform(navigator = {}) {
+  const ua = navigator.userAgent ?? '';
+  if (/bot|crawl|spider|preview|scrap/i.test(ua)) return null;
+  if (/android/i.test(ua)) return 'android';
+  if (/iPad|iPhone|iPod/i.test(ua) || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) return 'ios';
+  return null;
+}
+
+export function appOpenUrl(code, platform, configuration) {
+  if (typeof code !== 'string' || !/^(?:[0-9]{6}|[a-f0-9]{12})$/i.test(code)) return null;
+  const normalized = code.toLowerCase();
+  const fallback = storeUrl(configuration?.android, 'android');
+  if (platform === 'android' && fallback) {
+    return `intent://invite?code=${normalized}#Intent;scheme=haesseoyo;package=com.kyeot.haesseoyo;S.browser_fallback_url=${encodeURIComponent(fallback)};end`;
+  }
+  return `haesseoyo://invite?code=${normalized}`;
+}
+
+/** Browser handoff is best effort, not an installed-app detector. No invitation is sent to a store. */
+export function prepareHandoff(code, document, browser, configuration, autoStart = true) {
+  const platform = mobilePlatform(browser.navigator);
+  const target = appOpenUrl(code, platform, configuration);
+  const fallback = platform ? storeUrl(configuration?.[platform], platform) : null;
+  const button = document.getElementById('open-app');
+  const status = document.getElementById('handoff-status');
+  if (!target) return { launch: () => false, cancel() {} };
+  button.href = target;
+  let timer = null;
+  let started = 0;
+  const clock = () => browser.Date?.now?.() ?? Date.now();
+  const cancel = () => {
+    if (timer !== null) browser.clearTimeout(timer);
+    timer = null;
+  };
+  const onHidden = () => {
+    if (document.visibilityState === 'hidden') cancel();
+  };
+  document.addEventListener('visibilitychange', onHidden);
+  browser.addEventListener('pagehide', cancel);
+  // Reading/copying the fallback or choosing a store should never race an automatic redirect.
+  document.addEventListener('pointerdown', cancel);
+  document.addEventListener('keydown', cancel);
+  const launch = () => {
+    if (document.visibilityState === 'hidden') return false;
+    cancel();
+    started = clock();
+    status.textContent = '앱을 여는 중이에요. 연결되지 않으면 다운로드 페이지로 이동해요.';
+    if (fallback) {
+      timer = browser.setTimeout(() => {
+        timer = null;
+        // Suspended browsers can resume stale timers after the person returns from the app.
+        if (document.visibilityState === 'hidden' || clock() - started > 5000) return;
+        status.textContent = '앱 다운로드 페이지로 이동하고 있어요.';
+        browser.location.replace(fallback);
+      }, 2200);
+    }
+    try {
+      browser.location.assign(target);
+      return true;
+    } catch {
+      cancel();
+      if (fallback && document.visibilityState !== 'hidden') browser.location.replace(fallback);
+      else status.textContent = '자동으로 앱을 열지 못했어요. 아래 버튼이나 초대 코드를 이용해 주세요.';
+      return false;
+    }
+  };
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    launch();
+  });
+  // HTTPS app/universal links normally bypass this page for installed apps. Embedded browsers
+  // may show it instead; try the app once, with a verified store fallback and a visible retry.
+  if (autoStart && platform && fallback && document.visibilityState !== 'hidden') launch();
+  return { launch, cancel };
+}
+
 export async function initialize(document, browser) {
   const code = renderInvite(document, browser.location.search);
   document.getElementById('copy-code').addEventListener('click', () => void copyInvite(code, document, browser));
+  let interacted = false;
+  const onInteraction = () => { interacted = true; };
+  document.addEventListener('pointerdown', onInteraction);
+  document.addEventListener('keydown', onInteraction);
+  let configuration = null;
   try {
     // A local static config is the only request; the invitation is never included in it.
     const response = await browser.fetch('./downloads.json', { credentials: 'omit', referrerPolicy: 'no-referrer' });
     if (!response.ok) throw new Error('unavailable');
-    renderDownloads(document, await response.json());
+    configuration = await response.json();
+    renderDownloads(document, configuration);
   } catch {
     renderDownloads(document, null);
     document.getElementById('download-status').textContent = '스토어 연결을 불러오지 못했어요. 잠시 후 다시 열어주세요.';
   }
+  document.removeEventListener('pointerdown', onInteraction);
+  document.removeEventListener('keydown', onInteraction);
+  return prepareHandoff(code, document, browser, configuration, !interacted);
 }
 
 if (typeof window !== 'undefined' && typeof document !== 'undefined') void initialize(document, window);
